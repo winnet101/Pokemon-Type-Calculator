@@ -4,6 +4,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^0.0.0"
   },
   "scripts": {
+    "dev": "cd github-page && npm run start",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   }

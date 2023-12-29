@@ -1,14 +1,13 @@
-import logo from './logo.svg';
-import './App.css';
-import Input from "./components/input";
+// import logo from './logo.svg';
+// import ListItem from "./List/ListItem";
+import List from "./components/List";
 
 export default function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>hello world</h1>
-      </header>
-      <Input />
+      <h1>hello world!</h1>
+
+      <List />
     </div>
   );
 }
