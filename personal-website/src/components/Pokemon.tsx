@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { NamedAPIResource, PokeTypes, Type } from "../types";
 import { typedJson, apiResourceToArray as toArr } from "../utils/Utils";
 import styles from "../styles/Pokemon.module.css";
@@ -31,13 +31,20 @@ export default function Pokemon() {
   const [weaknesses, setWeaknesses] = useState<PokeTypes[]>([]);
   const [strengths, setStrengths] = useState<PokeTypes[]>([]);
   const [nulls, setNulls] = useState<PokeTypes[]>([]);
+  const disabled = useRef(false);
 
   useEffect(() => {
     const typedArrInput:PokeTypes[] = [];
     for (const pt of pokeTypes) {
-      if (input.search(pt)) {
+      if (input.includes(pt)) {
         typedArrInput.push(pt);
       }
+    }
+
+    if(typedArrInput.length >= 2) {
+      disabled.current = true
+    } else {
+      disabled.current = false
     }
 
     /** @todo Also make this a single object. */
@@ -64,8 +71,20 @@ export default function Pokemon() {
 
             newNulls = arrToNewTypes(newNulls, relations.no_damage_from);
 
-            setWeaknesses(newWeaknesses);
+            for (const pt of pokeTypes) {
+              if (newStrengths.includes(pt) && newWeaknesses.includes(pt)) {
+                newStrengths.splice(newStrengths.indexOf(pt), 1);
+                newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
+              }
+
+              if (newNulls.includes(pt)) {
+                newStrengths.splice(newStrengths.indexOf(pt), 1);
+                newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
+              }
+            }
+
             setStrengths(newStrengths);
+            setWeaknesses(newWeaknesses);
             setNulls(newNulls);
           })
           .catch(console.error);
@@ -75,6 +94,8 @@ export default function Pokemon() {
         setNulls([]);
       }
     }
+
+    // function defs
 
     /** Adds a NamedAPIResource list of types to the current array of types being tracked (weaknesses, strengths, or nulls.)
      * @param origArr: The current array of types being operated on.
@@ -95,18 +116,21 @@ export default function Pokemon() {
       const data = await fetch(`https://pokeapi.co/api/v2/type/${type}/`);
       return data;
     }
-  }, [input]);
 
-  function toRemoved(input: PokeTypes[], remove: PokeTypes): PokeTypes[] {
-    const newInput = input.filter(el => el !== remove);
-    return newInput;
-  }
+  }, [input]);
 
   return (
     <>
       <StringInput 
         value={input}
-        onChange={(el) => setInput(el)}
+        onKeyDown={(ev) => {
+          if (ev.key !== "Backspace" && disabled.current) {
+            ev.preventDefault();
+          }
+        }}
+        onChange={(el) => {
+            setInput(el)
+        }}
       />
       {pokeTypes.map((el, i) => (
         <button
@@ -122,9 +146,9 @@ export default function Pokemon() {
         </button>
       ))}
       <div>
-        Weaknesses: {weaknesses.toString() ? weaknesses.join(" ") : "none"}
+        Weak to: {weaknesses.toString() ? weaknesses.join(" ") : "none"}
         <br />
-        Strengths: {strengths.toString() ? strengths.join(" ") : "none"}
+        Resists: {strengths.toString() ? strengths.join(" ") : "none"}
         <br />
         Nulls: {nulls.toString() ? nulls.join(" ") : "none"}
       </div>
@@ -132,7 +156,7 @@ export default function Pokemon() {
   );
 
   function handleClick(el: PokeTypes) {
-    if (!input.toLowerCase().includes(el)) {
+    if (!input.toLowerCase().includes(el) && !disabled.current) {
       let newInput = input.slice();
       setInput(`${newInput.trim()}${el}`);
     } else {
