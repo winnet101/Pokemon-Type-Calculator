@@ -31,20 +31,28 @@ export default function Pokemon() {
   const [weaknesses, setWeaknesses] = useState<PokeTypes[]>([]);
   const [strengths, setStrengths] = useState<PokeTypes[]>([]);
   const [nulls, setNulls] = useState<PokeTypes[]>([]);
+  
   const disabled = useRef(false);
+  const prevTypes = useRef<PokeTypes[]>([]);
 
   useEffect(() => {
-    const typedArrInput:PokeTypes[] = [];
+    const currentTypes: PokeTypes[] = [];
     for (const pt of pokeTypes) {
       if (input.includes(pt)) {
-        typedArrInput.push(pt);
+        currentTypes.push(pt);
       }
     }
 
-    if(typedArrInput.length >= 2) {
-      disabled.current = true
+    const currentEqPrev =
+      currentTypes.every((el) => prevTypes.current.includes(el)) &&
+      prevTypes.current.every((el) => currentTypes.includes(el));
+
+    prevTypes.current = currentTypes;
+
+    if (currentTypes.length >= 2) {
+      disabled.current = true;
     } else {
-      disabled.current = false
+      disabled.current = false;
     }
 
     /** @todo Also make this a single object. */
@@ -52,46 +60,50 @@ export default function Pokemon() {
     let newStrengths: PokeTypes[] = [];
     let newNulls: PokeTypes[] = [];
 
-    for (const pt of pokeTypes) {
-      if (input.toLowerCase().includes(pt)) {
-        fetchType(pt)
-          .then((res) => typedJson<Type>(res))
-          .then((data) => {
-            const relations = data.damage_relations;
+    if (!currentEqPrev) {
+      for (const pt of pokeTypes) {
+        if (input.toLowerCase().includes(pt)) {
+          console.log("fetching");
+          fetchType(pt)
+            .then((res) => typedJson<Type>(res))
+            .then((data) => {
+              const relations = data.damage_relations;
 
-            newWeaknesses = arrToNewTypes(
-              newWeaknesses,
-              relations.double_damage_from
-            );
-            newStrengths = arrToNewTypes(
-              newStrengths,
-              relations.half_damage_from
-            );
-            /** @todo check overlaps */
+              newWeaknesses = arrToNewTypes(
+                newWeaknesses,
+                relations.double_damage_from
+              );
+              newStrengths = arrToNewTypes(
+                newStrengths,
+                relations.half_damage_from
+              );
+              newNulls = arrToNewTypes(newNulls, relations.no_damage_from);
 
-            newNulls = arrToNewTypes(newNulls, relations.no_damage_from);
+              for (const pt of pokeTypes) {
+                if (newStrengths.includes(pt) && newWeaknesses.includes(pt)) {
+                  newStrengths.splice(newStrengths.indexOf(pt), 1);
+                  newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
+                }
 
-            for (const pt of pokeTypes) {
-              if (newStrengths.includes(pt) && newWeaknesses.includes(pt)) {
-                newStrengths.splice(newStrengths.indexOf(pt), 1);
-                newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
+                if (
+                  newNulls.includes(pt) &&
+                  (newStrengths.includes(pt) || newWeaknesses.includes(pt))
+                ) {
+                  newStrengths.splice(newStrengths.indexOf(pt), 1);
+                  newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
+                }
               }
 
-              if (newNulls.includes(pt)) {
-                newStrengths.splice(newStrengths.indexOf(pt), 1);
-                newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
-              }
-            }
-
-            setStrengths(newStrengths);
-            setWeaknesses(newWeaknesses);
-            setNulls(newNulls);
-          })
-          .catch(console.error);
-      } else {
-        setWeaknesses([]);
-        setStrengths([]);
-        setNulls([]);
+              setStrengths(newStrengths);
+              setWeaknesses(newWeaknesses);
+              setNulls(newNulls);
+            })
+            .catch(console.error);
+        } else {
+          setWeaknesses([]);
+          setStrengths([]);
+          setNulls([]);
+        }
       }
     }
 
@@ -116,20 +128,14 @@ export default function Pokemon() {
       const data = await fetch(`https://pokeapi.co/api/v2/type/${type}/`);
       return data;
     }
-
   }, [input]);
 
   return (
     <>
-      <StringInput 
+      <StringInput
         value={input}
-        onKeyDown={(ev) => {
-          if (ev.key !== "Backspace" && disabled.current) {
-            ev.preventDefault();
-          }
-        }}
         onChange={(el) => {
-            setInput(el)
+          setInput(el);
         }}
       />
       {pokeTypes.map((el, i) => (
@@ -165,7 +171,7 @@ export default function Pokemon() {
     }
   }
 
-  function toRemovedString(input:string, remove: PokeTypes):string {
+  function toRemovedString(input: string, remove: PokeTypes): string {
     const newInput = input.split(new RegExp(remove, "i")).join("");
     return newInput;
   }
