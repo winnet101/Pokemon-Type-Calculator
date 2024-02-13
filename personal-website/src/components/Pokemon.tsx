@@ -31,9 +31,33 @@ export default function Pokemon() {
   const [weaknesses, setWeaknesses] = useState<PokeTypes[]>([]);
   const [strengths, setStrengths] = useState<PokeTypes[]>([]);
   const [nulls, setNulls] = useState<PokeTypes[]>([]);
-  
+
   const disabled = useRef(false);
   const prevTypes = useRef<PokeTypes[]>([]);
+
+  const [_images, setImages] = useState<any[]>([]);
+
+  useEffect(() => {
+    const imageModules = import.meta.glob("../assets/*");
+
+    let newPromises: Promise<any>[] = [];
+    for (const path of Object.values(imageModules)) {
+      newPromises.push(fetchPath(path));
+    }
+
+    Promise.all(newPromises).then((newImages) => {
+      const newPaths = (newImages.map((img) => img.default));
+      console.log(newPaths);
+      setImages(newPaths);
+    });
+
+
+    // functions
+
+    async function fetchPath(path: () => Promise<any>) {
+      return await path();
+    }
+  }, []);
 
   useEffect(() => {
     const currentTypes: PokeTypes[] = [];
@@ -107,14 +131,8 @@ export default function Pokemon() {
       }
     }
 
-    // function defs
+    // functions
 
-    /** Adds a NamedAPIResource list of types to the current array of types being tracked (weaknesses, strengths, or nulls.)
-     * @param origArr: The current array of types being operated on.
-     * @param currentApiObj: The NamedAPIResource to add.
-     * @returns: An array of types with the new types from the APIResource added.
-     *
-     */
     function arrToNewTypes(
       origArr: PokeTypes[],
       currentApiObj: NamedAPIResource[]
@@ -137,21 +155,27 @@ export default function Pokemon() {
         onChange={(el) => {
           setInput(el);
         }}
+        className={styles.input}
       />
-      {pokeTypes.map((el, i) => (
-        <button
-          key={i}
-          onClick={() => {
-            handleClick(el);
-          }}
-          className={`
+      <div className={styles.buttonContainer}>
+        {pokeTypes.map((el, i) => ( // probably refactor this out
+          <button
+            key={i}
+            onClick={() => {
+              handleClick(el);
+            }}
+            className={`
+            ${styles.button}
             ${input.toLowerCase().includes(el) && styles.selected}
           `}
-        >
-          {el}
-        </button>
-      ))}
-      <div>
+          >
+            <div>{el}</div>
+            <img height={25} src={`/src/assets/${el}.png`} alt="" />
+          </button>
+        ))}
+      </div>
+
+      <div> {/* parse this for icons to add */}
         Weak to: {weaknesses.toString() ? weaknesses.join(" ") : "none"}
         <br />
         Resists: {strengths.toString() ? strengths.join(" ") : "none"}

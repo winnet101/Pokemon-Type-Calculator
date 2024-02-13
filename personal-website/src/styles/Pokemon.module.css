@@ -1,3 +1,19 @@
+.buttonContainer {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.2rem;
+}
+
+.button {
+  text-transform: capitalize;
+  padding: 0.3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+}
+
 .selected {
   border-width: 2px;
   background-color: aqua;
