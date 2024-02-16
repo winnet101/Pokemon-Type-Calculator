@@ -3,6 +3,7 @@ import type { NamedAPIResource, PokeTypes, Type } from "../types";
 import { typedJson, apiResourceToArray as toArr } from "../utils/Utils";
 import styles from "../styles/Pokemon.module.css";
 import StringInput from "../utils/StringInput";
+import TypeButton from "../utils/TypeButton";
 
 export default function Pokemon() {
   const [input, setInput] = useState("");
@@ -34,30 +35,6 @@ export default function Pokemon() {
 
   const disabled = useRef(false);
   const prevTypes = useRef<PokeTypes[]>([]);
-
-  const [_images, setImages] = useState<any[]>([]);
-
-  useEffect(() => {
-    const imageModules = import.meta.glob("../assets/*");
-
-    let newPromises: Promise<any>[] = [];
-    for (const path of Object.values(imageModules)) {
-      newPromises.push(fetchPath(path));
-    }
-
-    Promise.all(newPromises).then((newImages) => {
-      const newPaths = (newImages.map((img) => img.default));
-      console.log(newPaths);
-      setImages(newPaths);
-    });
-
-
-    // functions
-
-    async function fetchPath(path: () => Promise<any>) {
-      return await path();
-    }
-  }, []);
 
   useEffect(() => {
     const currentTypes: PokeTypes[] = [];
@@ -158,20 +135,16 @@ export default function Pokemon() {
         className={styles.input}
       />
       <div className={styles.buttonContainer}>
-        {pokeTypes.map((el, i) => ( // probably refactor this out
-          <button
-            key={i}
-            onClick={() => {
-              handleClick(el);
-            }}
-            className={`
+        {pokeTypes.map((el, i) => (
+        <TypeButton 
+          key={i}
+          el={el} 
+          handleClick={handleClick}     
+          className={`
             ${styles.button}
             ${input.toLowerCase().includes(el) && styles.selected}
-          `}
-          >
-            <div>{el}</div>
-            <img height={25} src={`/src/assets/${el}.png`} alt="" />
-          </button>
+          `}    
+        />
         ))}
       </div>
 
