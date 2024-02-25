@@ -1,7 +1,28 @@
-/** (string) Every Pokemon type.*/
-type PokeTypes = "normal" | "fighting" | "flying" | "poison" | "ground" | "rock" | "bug" | "ghost" | "steel" | "fire" | "water" | "grass" | "electric" | "psychic" | "ice" | "dragon" | "dark" | "fairy" | "stellar";
+const pokeTypesList = [
+  "normal",
+  "fighting",
+  "flying",
+  "poison",
+  "ground",
+  "rock",
+  "bug",
+  "ghost",
+  "steel",
+  "fire",
+  "water",
+  "grass",
+  "electric",
+  "psychic",
+  "ice",
+  "dragon",
+  "dark",
+  "fairy",
+] as const;
 
-/** A  simplified implementation of https://github.com/lokshunhung/pokeapi-types/blob/master/src/typedef/types.ts's PokeAPI types. */
+type PokeType = typeof pokeTypesList;
+type PokeTypes = PokeType[number];
+
+/** A  simplified implementation of https://github.com/lokshunhung/pokeapi-types/blob/master/src/typedef/types.ts 's PokeAPI types. */
 interface Type {
   /** The identifier for this resource. */
   id: number;
@@ -44,3 +65,4 @@ interface NamedAPIResource {
 }
 
 export type { PokeTypes, Type, TypeRelations, NamedAPIResource };
+export { pokeTypesList };

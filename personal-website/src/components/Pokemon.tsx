@@ -1,32 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import type { NamedAPIResource, PokeTypes, Type } from "../types";
-import { typedJson, apiResourceToArray as toArr } from "../utils/Utils";
+import { pokeTypesList } from "../types";
+import { typedJson } from "../utils/Utils";
 import styles from "../styles/Pokemon.module.css";
 import StringInput from "../utils/StringInput";
-import TypeButton from "../utils/TypeButton";
+import TypeButton from "./TypeButton";
 
 export default function Pokemon() {
+  const [currTypes, setCurrTypes] = useState<PokeTypes[]>([]);
   const [input, setInput] = useState("");
-  const pokeTypes: PokeTypes[] = [
-    "normal",
-    "fighting",
-    "flying",
-    "poison",
-    "ground",
-    "rock",
-    "bug",
-    "ghost",
-    "steel",
-    "fire",
-    "water",
-    "grass",
-    "electric",
-    "psychic",
-    "ice",
-    "dragon",
-    "dark",
-    "fairy",
-  ];
 
   /** @todo Turn this into a single object.*/
   const [weaknesses, setWeaknesses] = useState<PokeTypes[]>([]);
@@ -37,20 +19,14 @@ export default function Pokemon() {
   const prevTypes = useRef<PokeTypes[]>([]);
 
   useEffect(() => {
-    const currentTypes: PokeTypes[] = [];
-    for (const pt of pokeTypes) {
-      if (input.includes(pt)) {
-        currentTypes.push(pt);
-      }
-    }
 
     const currentEqPrev =
-      currentTypes.every((el) => prevTypes.current.includes(el)) &&
-      prevTypes.current.every((el) => currentTypes.includes(el));
+      currTypes.every((el) => prevTypes.current.includes(el)) &&
+      prevTypes.current.every((el) => currTypes.includes(el));
 
-    prevTypes.current = currentTypes;
+    prevTypes.current = currTypes.slice();
 
-    if (currentTypes.length >= 2) {
+    if (currTypes.length >= 2) {
       disabled.current = true;
     } else {
       disabled.current = false;
@@ -62,8 +38,8 @@ export default function Pokemon() {
     let newNulls: PokeTypes[] = [];
 
     if (!currentEqPrev) {
-      for (const pt of pokeTypes) {
-        if (input.toLowerCase().includes(pt)) {
+      for (const pt of pokeTypesList) {
+        if (currTypes.includes(pt)) {
           console.log("fetching");
           fetchType(pt)
             .then((res) => typedJson<Type>(res))
@@ -80,18 +56,27 @@ export default function Pokemon() {
               );
               newNulls = arrToNewTypes(newNulls, relations.no_damage_from);
 
-              for (const pt of pokeTypes) {
+              for (const pt of pokeTypesList) {
+                if (newStrengths.includes(pt)) {
+                  newStrengths.splice(newStrengths.indexOf(pt), 1);
+                  if (newStrengths.includes(pt)) {
+                  }
+                }
+
+                // check overlap
                 if (newStrengths.includes(pt) && newWeaknesses.includes(pt)) {
                   newStrengths.splice(newStrengths.indexOf(pt), 1);
                   newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
                 }
 
-                if (
-                  newNulls.includes(pt) &&
-                  (newStrengths.includes(pt) || newWeaknesses.includes(pt))
-                ) {
-                  newStrengths.splice(newStrengths.indexOf(pt), 1);
-                  newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
+                // check null overlap
+                if (newNulls.includes(pt)) {
+                  if (newStrengths.includes(pt)) {
+                    newStrengths;
+                  }
+                  if (newWeaknesses.includes(pt)) {
+                    newWeaknesses.splice(newWeaknesses.indexOf(pt), 1);
+                  }
                 }
               }
 
@@ -109,21 +94,20 @@ export default function Pokemon() {
     }
 
     // functions
-
     function arrToNewTypes(
       origArr: PokeTypes[],
       currentApiObj: NamedAPIResource[]
     ) {
       const current = toArr(currentApiObj) as PokeTypes[];
       const newArr = [...origArr, ...current];
-      return [...new Set(newArr)];
+      return newArr;
     }
 
     async function fetchType(type: PokeTypes) {
       const data = await fetch(`https://pokeapi.co/api/v2/type/${type}/`);
       return data;
     }
-  }, [input]);
+  }, [currTypes]);
 
   return (
     <>
@@ -135,41 +119,60 @@ export default function Pokemon() {
         className={styles.input}
       />
       <div className={styles.buttonContainer}>
-        {pokeTypes.map((el, i) => (
-        <TypeButton 
-          key={i}
-          el={el} 
-          handleClick={handleClick}     
-          className={`
+        {pokeTypesList.map((el, i) => (
+          <TypeButton
+            key={i}
+            el={el}
+            handleClick={handleClick}
+            className={`
             ${styles.button}
-            ${input.toLowerCase().includes(el) && styles.selected}
-          `}    
-        />
+            ${currTypes.includes(el) && styles.selected}
+          `}
+          />
         ))}
       </div>
-
-      <div> {/* parse this for icons to add */}
-        Weak to: {weaknesses.toString() ? weaknesses.join(" ") : "none"}
+      
+      <div>
+        {" "}
+        {/* parse this for icons to add */}
+        Weak to: {(weaknesses.toString()) ? weaknesses.join(" ") : "none"}
         <br />
         Resists: {strengths.toString() ? strengths.join(" ") : "none"}
         <br />
         Nulls: {nulls.toString() ? nulls.join(" ") : "none"}
       </div>
+
+      <code>
+        {currTypes}
+      </code>
     </>
   );
 
   function handleClick(el: PokeTypes) {
-    if (!input.toLowerCase().includes(el) && !disabled.current) {
-      let newInput = input.slice();
-      setInput(`${newInput.trim()}${el}`);
+    if (!currTypes.includes(el) && !disabled.current) {
+      let newTypes = currTypes.slice();
+      newTypes.push(el)
+      setCurrTypes(newTypes)
     } else {
-      const newInput = toRemovedString(input.slice(), el);
-      setInput(newInput);
+      const newInput = toRemovedArray(el, currTypes);
+      setCurrTypes(newInput);
     }
   }
 
-  function toRemovedString(input: string, remove: PokeTypes): string {
-    const newInput = input.split(new RegExp(remove, "i")).join("");
-    return newInput;
+  function toRemovedArray<T>(input: T, array: T[]): T[] {
+    const index = array.indexOf(input);
+    let newArray = array.slice();
+    if (index > - 1) {
+      newArray.splice(index, 1);
+    }
+    return newArray;
+  }
+
+  function toArr(api: NamedAPIResource[]) {
+    const arr: string[] = [];
+    for (const [_key, value] of Object.entries(api)) {
+      arr.push(value.name);
+    }
+    return arr;
   }
 }
