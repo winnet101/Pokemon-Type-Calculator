@@ -21,6 +21,7 @@ const pokeTypesList = [
 
 type PokeType = typeof pokeTypesList;
 type PokeTypes = PokeType[number];
+// type PokeTypes = "normal" | "fighting" | "flying" | "poison" | "ground" | "rock" | "bug" | "ghost" | "steel" | "fire" | "water" | "grass" | "electric" | "psychic" | "ice" | "dragon" | "dark" | "fairy"
 
 /** A  simplified implementation of https://github.com/lokshunhung/pokeapi-types/blob/master/src/typedef/types.ts 's PokeAPI types. */
 interface Type {
@@ -60,7 +61,7 @@ interface TypeRelations {
 }
 
 interface NamedAPIResource {
-  name: string,
+  name: PokeTypes,
   url: string
 }
 

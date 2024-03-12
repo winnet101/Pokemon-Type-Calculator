@@ -12,9 +12,15 @@
   justify-content: space-between;
   align-items: center;
   border-radius: 6px;
+  transition: 
+    background-color 0.2s,
+    color 0.2s
 }
 
 .selected {
   border-width: 2px;
-  background-color: aqua;
+  color: rgb(234, 234, 234);
+  background-color: rgb(19, 49, 114);
+  border-color: rgb(234, 234, 234);
+  box-shadow: black 0 0 7px 0.3px;
 }
