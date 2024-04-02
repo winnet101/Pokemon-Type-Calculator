@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { PokeTypes } from "../types";
 import { pokeTypesList } from "../types";
 import styles from "../styles/Pokemon.module.css";
@@ -7,46 +7,11 @@ import TypeButton from "./TypeButton";
 import usePokeTypes from "../utils/usePokeTypes";
 
 export default function Pokemon() {
+  // TODO: make searching work
   const [input, setInput] = useState("");
-  const disabled = useRef(false);
+  // const disabled = useRef(false);
 
-  const {currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
-
-
-  // /** @todo Turn this into a single object.*/
-  // const [weaknesses, setWeaknesses] = useState<PokeTypes[]>([]);
-  // const [strengths, setStrengths] = useState<PokeTypes[]>([]);
-  // const [nulls, setNulls] = useState<PokeTypes[]>([]);
-
-  // const prevTypes = useRef<PokeTypes[]>([]);
-
-  // useEffect(() => {
-  //   const fetchTimeout = setTimeout(() => {
-  //     if (input.trim() !== "") {
-  //       fetchMon(input.toLowerCase())
-  //         .then((data) => typedJson(data))
-  //         .then((mon) => {
-  //           // @ts-expect-error
-  //           const apiTypes: Object[] = mon.types;
-  //           const newTypes = apiTypes.map((api) => {
-  //             // @ts-expect-error
-  //             return api.type.name
-  //           })
-            
-  //           setCurrTypes(newTypes)
-
-  //         })
-  //         .catch((err) => console.log(err))
-  //     }
-  //   }, 500);
-
-  //   async function fetchMon(mon: string) {
-  //     const data = await fetch(`https://pokeapi.co/api/v2/pokemon/${mon}/`);
-  //     return data;
-  //   }
-
-  //   return () => clearTimeout(fetchTimeout);
-  // }, [input]);
+  const {currTypes, setCurrTypes, pokeMatchups, isLoading} = usePokeTypes();
 
   return (
     <>
@@ -71,8 +36,18 @@ export default function Pokemon() {
         ))}
       </div>
 
-      <code>{currTypes}</code><br />
-      <code>{isLoading ? "Loading..." : pokeMatchups.weaknesses}</code>
+      <code>
+        <h1 style={{margin:0, padding:0}}>{(currTypes[0]) ? currTypes : "none"}</h1>
+        Weaknesses: {isLoading ? "Loading..." : pokeMatchups.weaknesses}
+        <br />
+        DOUBLE WEAKNESSES: {isLoading ? "Loading..." : pokeMatchups.double_weak}
+        <br />
+        Strengths: {isLoading ? "Loading..." : pokeMatchups.strengths}
+        <br />
+        DOUBLE STRENGTHS: {isLoading ? "Loading..." : pokeMatchups.double_strengths}
+        <br />
+        Nulls: {isLoading ? "Loading..." : pokeMatchups.nulls}
+      </code>
     </>
   );
 

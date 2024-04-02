@@ -19,9 +19,10 @@ const pokeTypesList = [
   "fairy",
 ] as const;
 
-type PokeType = typeof pokeTypesList;
-type PokeTypes = PokeType[number];
-// type PokeTypes = "normal" | "fighting" | "flying" | "poison" | "ground" | "rock" | "bug" | "ghost" | "steel" | "fire" | "water" | "grass" | "electric" | "psychic" | "ice" | "dragon" | "dark" | "fairy"
+// type PokeType = typeof pokeTypesList;
+// type PokeTypes = PokeType[number] (this works but makes all the intellisense look dumb)
+
+type PokeTypes = "normal" | "fighting" | "flying" | "poison" | "ground" | "rock" | "bug" | "ghost" | "steel" | "fire" | "water" | "grass" | "electric" | "psychic" | "ice" | "dragon" | "dark" | "fairy"
 
 /** A  simplified implementation of https://github.com/lokshunhung/pokeapi-types/blob/master/src/typedef/types.ts 's PokeAPI types. */
 interface Type {

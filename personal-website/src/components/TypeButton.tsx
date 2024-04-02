@@ -2,6 +2,7 @@ import { ButtonHTMLAttributes, useEffect, useState } from "react";
 import { PokeTypes } from "../types";
 
 export default function TypeButton({
+  //TODO: un-refactor this back in
   el,
   handleClick,
   ...otherProps
