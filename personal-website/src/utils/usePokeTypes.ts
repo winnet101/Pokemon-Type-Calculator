@@ -77,13 +77,14 @@ function usePokeTypes() {
 
         if (strongMatchupsWhereTypePresent.length > 1) {
           newMatchups.strengths = toDeletedArr(newMatchups.strengths, type)
+          strongMatchupsWhereTypePresent = toDeletedArr(strongMatchupsWhereTypePresent, "strengths")
         }
         if (weakMatchupsWhereTypePresent.length > 1) {
           newMatchups.weaknesses = toDeletedArr(newMatchups.weaknesses, type)
+          weakMatchupsWhereTypePresent = toDeletedArr(weakMatchupsWhereTypePresent, "weaknesses")
+
         }
 
-        // TODO: for some reason this is breaking some super effective matchups (i d k)
-        // test case: Normal / Dark
         let allMatchupsWherePresent = [...(strongMatchupsWhereTypePresent), ...(weakMatchupsWhereTypePresent)]
         if (allMatchupsWherePresent.length > 1) {
           allMatchupsWherePresent.map((matchup) => {
@@ -91,6 +92,14 @@ function usePokeTypes() {
           })
         }
       })
+
+      for (const type of newMatchups.nulls) {
+        Object.keys(newMatchups).map((matchup) => {
+          if (matchup !== "nulls") {
+            newMatchups[matchup as keyof Matchups] = toDeletedArr(newMatchups[matchup as keyof Matchups], type as PokeTypes)
+          }
+        })
+      }
 
       // TODO: check null overlaps
 
@@ -130,7 +139,7 @@ function toDupedElements<T extends string>(types: T[]) {
       dupedTypes.push(type as T);
     }
   })
-  return dupedTypes;
+  return toUniqueArr(dupedTypes);
 }
 
 function toDeletedArr<T extends string>(types: T[], deletedElement: T) {

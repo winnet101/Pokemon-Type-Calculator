@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { PokeTypes } from "../types";
 import { pokeTypesList } from "../types";
 import styles from "../styles/Pokemon.module.css";
@@ -9,9 +9,28 @@ import usePokeTypes from "../utils/usePokeTypes";
 export default function Pokemon() {
   // TODO: make searching work
   const [input, setInput] = useState("");
-  // const disabled = useRef(false);
 
-  const {currTypes, setCurrTypes, pokeMatchups, isLoading} = usePokeTypes();
+  const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
+
+  const [_images, setImages] = useState<any[]>([]);
+  useEffect(() => {
+    const imageModules = import.meta.glob("../assets/*");
+
+    let newPromises: Promise<any>[] = [];
+    for (const path of Object.values(imageModules)) {
+      newPromises.push(fetchPath(path));
+    }
+
+    Promise.all(newPromises).then((newImages) => {
+      const newPaths = newImages.map((img) => img.default);
+      setImages(newPaths);
+    });
+
+    // functions
+    async function fetchPath(path: () => Promise<any>) {
+      return await path();
+    }
+  }, []);
 
   return (
     <>
@@ -37,16 +56,14 @@ export default function Pokemon() {
       </div>
 
       <code>
-        <h1 style={{margin:0, padding:0}}>{(currTypes[0]) ? currTypes : "none"}</h1>
-        Weaknesses: {isLoading ? "Loading..." : pokeMatchups.weaknesses}
-        <br />
-        DOUBLE WEAKNESSES: {isLoading ? "Loading..." : pokeMatchups.double_weak}
-        <br />
-        Strengths: {isLoading ? "Loading..." : pokeMatchups.strengths}
-        <br />
-        DOUBLE STRENGTHS: {isLoading ? "Loading..." : pokeMatchups.double_strengths}
-        <br />
-        Nulls: {isLoading ? "Loading..." : pokeMatchups.nulls}
+        <h1 style={{ margin: 0, padding: 0 }}>
+          {currTypes[0] ? currTypes : "none"}
+        </h1>
+        {Object.entries(pokeMatchups).map(([matchup, types], i) => (
+          <div key={i}>
+            {matchup}: {isLoading ? "Loading..." : types.join(", ")}
+          </div>
+        ))}
       </code>
     </>
   );
