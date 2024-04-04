@@ -21,8 +21,25 @@ const pokeTypesList = [
 
 // type PokeType = typeof pokeTypesList;
 // type PokeTypes = PokeType[number] (this works but makes all the intellisense look dumb)
-
-type PokeTypes = "normal" | "fighting" | "flying" | "poison" | "ground" | "rock" | "bug" | "ghost" | "steel" | "fire" | "water" | "grass" | "electric" | "psychic" | "ice" | "dragon" | "dark" | "fairy"
+type PokeTypes =
+  | "normal"
+  | "fighting"
+  | "flying"
+  | "poison"
+  | "ground"
+  | "rock"
+  | "bug"
+  | "ghost"
+  | "steel"
+  | "fire"
+  | "water"
+  | "grass"
+  | "electric"
+  | "psychic"
+  | "ice"
+  | "dragon"
+  | "dark"
+  | "fairy";
 
 /** A  simplified implementation of https://github.com/lokshunhung/pokeapi-types/blob/master/src/typedef/types.ts 's PokeAPI types. */
 interface Type {
@@ -62,9 +79,21 @@ interface TypeRelations {
 }
 
 interface NamedAPIResource {
-  name: PokeTypes,
+  name: PokeTypes;
+  url: string;
+}
+
+interface PokemonList {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: PokemonAPIResource[]
+}
+
+interface PokemonAPIResource {
+  name: string;
   url: string
 }
 
-export type { PokeTypes, Type, TypeRelations, NamedAPIResource };
+export type { PokeTypes, Type, TypeRelations, NamedAPIResource, PokemonList, PokemonAPIResource };
 export { pokeTypesList };

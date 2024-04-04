@@ -5,11 +5,10 @@ import styles from "../styles/Pokemon.module.css";
 import StringInput from "../utils/StringInput";
 import TypeButton from "./TypeButton";
 import usePokeTypes from "../utils/usePokeTypes";
+import PokeInput from "./PokeInput";
 
 export default function Pokemon() {
-  // TODO: make searching work
-  const [input, setInput] = useState("");
-
+  // TODO: make searching work  
   const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
 
   const [_images, setImages] = useState<any[]>([]);
@@ -34,13 +33,7 @@ export default function Pokemon() {
 
   return (
     <>
-      <StringInput
-        value={input}
-        onChange={(el) => {
-          setInput(el);
-        }}
-        className={styles.input}
-      />
+      <PokeInput></PokeInput>
       <div className={styles.buttonContainer}>
         {pokeTypesList.map((el, i) => (
           <TypeButton
