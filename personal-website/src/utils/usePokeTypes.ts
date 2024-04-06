@@ -101,8 +101,6 @@ function usePokeTypes() {
         })
       }
 
-      // TODO: check null overlaps
-
       setPokeMatchups(newMatchups);
       setIsLoading(false);
     }

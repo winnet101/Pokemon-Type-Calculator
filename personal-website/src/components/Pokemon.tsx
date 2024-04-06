@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import type { PokeTypes } from "../types";
 import { pokeTypesList } from "../types";
 import styles from "../styles/Pokemon.module.css";
-import StringInput from "../utils/StringInput";
 import TypeButton from "./TypeButton";
 import usePokeTypes from "../utils/usePokeTypes";
 import PokeInput from "./PokeInput";
 
 export default function Pokemon() {
-  // TODO: make searching work  
   const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
 
   const [_images, setImages] = useState<any[]>([]);
@@ -62,7 +60,7 @@ export default function Pokemon() {
   );
 
   function handleClick(type: PokeTypes) {
-    if (!currTypes.includes(type)) {
+    if (!currTypes.includes(type) && currTypes.length < 2) {
       let newTypes = currTypes.slice();
       newTypes.push(type);
       setCurrTypes(newTypes);
