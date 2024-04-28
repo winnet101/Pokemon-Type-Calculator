@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: cd personal-website
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -25,7 +27,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Path of the directory containing the static assets.
-          path: /personal-website/dist
+          path: /dist
 
   deploy:
     runs-on: ubuntu-latest
