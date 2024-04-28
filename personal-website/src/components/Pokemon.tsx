@@ -12,7 +12,7 @@ export default function Pokemon() {
 
   const [_images, setImages] = useState<any[]>([]);
   useEffect(() => {
-    const imageModules = import.meta.glob("../assets/*");
+    const imageModules = import.meta.glob("../../assets/*");
 
     let newPromises: Promise<any>[] = [];
     for (const path of Object.values(imageModules)) {
