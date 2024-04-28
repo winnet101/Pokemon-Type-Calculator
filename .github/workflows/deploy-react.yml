@@ -8,9 +8,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./personal-website
 
     steps:
-      - run: cd ./personal-website
 
       - uses: actions/checkout@v4
 
@@ -27,7 +29,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Path of the directory containing the static assets.
-          path: /dist
+          path: personal-website/dist
 
   deploy:
     runs-on: ubuntu-latest
