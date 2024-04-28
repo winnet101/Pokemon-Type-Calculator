@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "cd personal-website && npm run dev",
+    "build": "cd personal-website && npm run build",
+    "preview": "cd personal-website && npm run preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

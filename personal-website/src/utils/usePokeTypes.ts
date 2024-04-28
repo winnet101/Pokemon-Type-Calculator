@@ -45,9 +45,9 @@ function usePokeTypes() {
             const data = await typedJson<Type>(res);
             const relations = data.damage_relations;
 
-            newMatchups.weaknesses.push(...fromAPItoArr(relations.double_damage_from));
-            newMatchups.strengths.push(...fromAPItoArr(relations.half_damage_from));
-            newMatchups.nulls.push(...fromAPItoArr(relations.no_damage_from));
+            newMatchups.weaknesses.push(...APItoArr(relations.double_damage_from));
+            newMatchups.strengths.push(...APItoArr(relations.half_damage_from));
+            newMatchups.nulls.push(...APItoArr(relations.no_damage_from));
           } catch (error) {
             console.error(error);
           }
@@ -119,7 +119,7 @@ export default usePokeTypes;
 
 // --- utils ---
 
-function fromAPItoArr(api: NamedAPIResource[]): PokeTypes[] {
+function APItoArr(api: NamedAPIResource[]): PokeTypes[] {
   const arr: PokeTypes[] = [];
   for (const [_key, value] of Object.entries(api)) {
     arr.push(value.name);

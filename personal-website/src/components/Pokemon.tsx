@@ -8,6 +8,7 @@ import PokeInput from "./PokeInput";
 
 export default function Pokemon() {
   const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
+  const [currPokemon, setCurrPokemon] = useState("");
 
   const [_images, setImages] = useState<any[]>([]);
   useEffect(() => {
@@ -29,9 +30,14 @@ export default function Pokemon() {
     }
   }, []);
 
+  function handleChangeCurrPokemon(pokemon:string) {
+    setCurrPokemon(pokemon)
+  }
+
   return (
     <>
-      <PokeInput></PokeInput>
+      {currPokemon}
+      <PokeInput handleChangeCurr={handleChangeCurrPokemon} />
       <div className={styles.buttonContainer}>
         {pokeTypesList.map((el, i) => (
           <TypeButton

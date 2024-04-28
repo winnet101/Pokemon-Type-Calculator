@@ -3,20 +3,31 @@ import StringInput from "../utils/StringInput";
 import usePokeNames from "../utils/usePokeNames";
 import styles from "../styles/PokeInput.module.css";
 
-export default function PokeInput() {
+export default function PokeInput({handleChangeCurr}: {handleChangeCurr: (pokemon: string) => void}) {
   // TODO: useState input up a level
   // handle getting types from selected pkmn
+  
   const [input, setInput] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const { pokemon, isLoading: pokemonIsLoading, hasError } = usePokeNames();
+  const trimmedInput = input.trim().toLowerCase() 
 
-  const pokeNames = pokemon
+  const POKENAMES_INCLUDING_CURR = pokemon
     .map((api) => {
       return api.name;
     })
-    .filter((name) => name.indexOf(input) > -1 && name !== input)
+    .filter((name) => name.indexOf(input) > -1)
     .filter((name) => !name.includes("-"))
     .slice(0, 10);
+
+  useEffect(() => {
+    if (POKENAMES_INCLUDING_CURR.includes(trimmedInput)) {
+      handleChangeCurr(trimmedInput)
+    }
+  }, [input])
+
+
+  const pokeNames = POKENAMES_INCLUDING_CURR.filter(name => name !== trimmedInput)
 
   // TODO: make this a custom hook?
   const [imagesIsLoading, setImagesIsLoading] = useState(false);
@@ -24,7 +35,7 @@ export default function PokeInput() {
   useEffect(() => {
     let ignore = false;
     setImagesIsLoading(true);
-    fetchImages();
+    const delay = setTimeout(fetchImages, 200);
 
     async function fetchImages() {
       const newImages = await Promise.all(
@@ -41,6 +52,7 @@ export default function PokeInput() {
     }
 
     return () => {
+      clearTimeout(delay);
       setImagesIsLoading(false);
       ignore = true;
     };
@@ -59,7 +71,7 @@ export default function PokeInput() {
         className={styles.input}
       />
       <ul className={styles.list}>
-        {input.trim().toLowerCase()
+        {trimmedInput
           ? pokemonIsLoading
             ? "Loading..."
             : hasError
