@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: cd personal-website
+      - run: cd ./personal-website
 
       - uses: actions/checkout@v4
 
