@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { PokeTypes } from "../types";
 import { pokeTypesList } from "../types";
 import styles from "../styles/Pokemon.module.css";
