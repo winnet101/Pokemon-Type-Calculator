@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { PokeTypes } from "../types";
 import { pokeTypesList } from "../types";
 import styles from "../styles/Pokemon.module.css";
@@ -10,26 +10,26 @@ export default function Pokemon() {
   const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
   const [currPokemon, setCurrPokemon] = useState("");
 
-  const [_images, setImages] = useState<any[]>([]);
-  useEffect(() => {
-    const imageModules = import.meta.glob("../assets/*");
+  // const [_images, setImages] = useState<any[]>([]);
+  // useEffect(() => {
+  //   const imageModules = import.meta.glob("../assets/*");
 
-    let newPromises: Promise<any>[] = [];
-    for (const path of Object.values(imageModules)) {
-      newPromises.push(fetchPath(path));
-    }
+  //   let newPromises: Promise<any>[] = [];
+  //   for (const path of Object.values(imageModules)) {
+  //     newPromises.push(fetchPath(path));
+  //   }
 
-    Promise.all(newPromises).then((newImages) => {
-      const newPaths = newImages.map((img) => img.default);
-      console.log(newPaths)
-      setImages(newPaths);
-    });
+  //   Promise.all(newPromises).then((newImages) => {
+  //     const newPaths = newImages.map((img) => img.default);
+  //     console.log(newPaths)
+  //     setImages(newPaths);
+  //   });
 
-    // functions
-    async function fetchPath(path: () => Promise<any>) {
-      return await path();
-    }
-  }, []);
+  //   // functions
+  //   async function fetchPath(path: () => Promise<any>) {
+  //     return await path();
+  //   }
+  // }, []);
 
   function handleChangeCurrPokemon(pokemon:string) {
     setCurrPokemon(pokemon)

@@ -21,6 +21,8 @@ import { PokeTypes } from "../types";
 //   water,
 // } from "../images.ts"
 
+import * as images from "../images"
+
 export default function TypeButton({
   el,
   handleClick,
@@ -38,7 +40,7 @@ export default function TypeButton({
       {...otherProps}
     >
       <div>{el}</div>
-      <img height={25} src={`/Pokemon-Type-Calculator/src/assets/${el}.png`} alt="" />
+      <img height={25} src={images[el]} alt="" />
     </button>
   );
 }
