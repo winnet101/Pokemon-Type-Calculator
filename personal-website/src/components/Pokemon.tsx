@@ -10,25 +10,27 @@ export default function Pokemon() {
   const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
   const [currPokemon, setCurrPokemon] = useState("");
 
-  const [_images, setImages] = useState<any[]>([]);
-  useEffect(() => {
-    const imageModules = import.meta.glob("../../assets/*");
+  // const [_images, setImages] = useState<any[]>([]);
+  // useEffect(() => {
+  //   const imageModules = import.meta.glob("../assets/*");
 
-    let newPromises: Promise<any>[] = [];
-    for (const path of Object.values(imageModules)) {
-      newPromises.push(fetchPath(path));
-    }
+  //   let newPromises: Promise<any>[] = [];
+  //   for (const path of Object.values(imageModules)) {
+  //     newPromises.push(fetchPath(path));
+  //   }
 
-    Promise.all(newPromises).then((newImages) => {
-      const newPaths = newImages.map((img) => img.default);
-      setImages(newPaths);
-    });
 
-    // functions
-    async function fetchPath(path: () => Promise<any>) {
-      return await path();
-    }
-  }, []);
+  //   Promise.all(newPromises).then((newImages) => {
+  //     const newPaths = newImages.map((img) => img.default);
+  //     console.log(newPaths)
+  //     setImages(newPaths);
+  //   });
+
+  //   // functions
+  //   async function fetchPath(path: () => Promise<any>) {
+  //     return await path();
+  //   }
+  // }, []);
 
   function handleChangeCurrPokemon(pokemon:string) {
     setCurrPokemon(pokemon)
@@ -39,14 +41,14 @@ export default function Pokemon() {
       {currPokemon}
       <PokeInput handleChangeCurr={handleChangeCurrPokemon} />
       <div className={styles.buttonContainer}>
-        {pokeTypesList.map((el, i) => (
+        {pokeTypesList.map((type, i) => (
           <TypeButton
             key={i}
-            el={el}
+            el={type}
             handleClick={handleClick}
             className={`
             ${styles.button}
-            ${currTypes.includes(el) && styles.selected}
+            ${currTypes.includes(type) && styles.selected}
           `}
           />
         ))}

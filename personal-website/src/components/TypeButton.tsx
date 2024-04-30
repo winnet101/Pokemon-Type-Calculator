@@ -18,7 +18,7 @@ export default function TypeButton({
       {...otherProps}
     >
       <div>{el}</div>
-      <img height={25} src={`/src/assets/${el}.png`} alt="" />
+      <img height={25} src={`/Pokemon-Type-Calculator/src/assets/${el}.png`} alt="" />
     </button>
   );
 }
