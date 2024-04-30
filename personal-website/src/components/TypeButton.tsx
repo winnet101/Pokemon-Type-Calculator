@@ -1,5 +1,25 @@
 import { ButtonHTMLAttributes } from "react";
 import { PokeTypes } from "../types";
+// import {
+//   bug,
+//   dark,
+//   dragon,
+//   electric,
+//   fairy,
+//   fighting,
+//   fire,
+//   flying,
+//   ghost,
+//   grass,
+//   ground,
+//   ice,
+//   normal,
+//   poison,
+//   psychic,
+//   rock,
+//   steel,
+//   water,
+// } from "../images.ts"
 
 export default function TypeButton({
   el,

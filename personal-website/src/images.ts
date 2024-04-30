@@ -1,20 +1,39 @@
-import bug from "./assets/bug.png"
-// export dark from "./assets/dark.png";
-// export dragon from "./assets/dragon.png"
-// export electric from "./assets/electric.png"
-// export fairy from "./assets/fairy.png"
-// export {default as fighting} from "./assets/fighting.png"
-// export {default as fire} from "./assets/fire.png"
-// export {default as flying} from "./assets/flying.png"
-// export {default as ghost} from "./assets/ghost.png"
-// export {default as grass} from "./assets/grass.png"
-// export {default as ground} from "./assets/ground.png"
-// export {default as ice} from "./assets/ice.png"
-// export {default as normal} from "./assets/normal.png"
-// export {default as poison} from "./assets/poison.png"
-// export {default as psychic} from "./assets/psychic.png"
-// export {default as rock} from "./assets/rock.png"
-// export {default as steel} from "./assets/steel.png"
-// export {default as water} from "./assets/water.png"
+import bug from "./assets/bug.png";
+import dark from "./assets/dark.png";
+import dragon from "./assets/dragon.png";
+import electric from "./assets/electric.png";
+import fairy from "./assets/fairy.png";
+import fighting from "./assets/fighting.png";
+import fire from "./assets/fire.png";
+import flying from "./assets/flying.png";
+import ghost from "./assets/ghost.png";
+import grass from "./assets/grass.png";
+import ground from "./assets/ground.png";
+import ice from "./assets/ice.png";
+import normal from "./assets/normal.png";
+import poison from "./assets/poison.png";
+import psychic from "./assets/psychic.png";
+import rock from "./assets/rock.png";
+import steel from "./assets/steel.png";
+import water from "./assets/water.png";
 
-export {bug}
+export {
+  bug,
+  dark,
+  dragon,
+  electric,
+  fairy,
+  fighting,
+  fire,
+  flying,
+  ghost,
+  grass,
+  ground,
+  ice,
+  normal,
+  poison,
+  psychic,
+  rock,
+  steel,
+  water,
+};
