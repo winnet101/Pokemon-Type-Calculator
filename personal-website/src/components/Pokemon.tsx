@@ -1,38 +1,22 @@
 import { useState } from "react";
-import type { PokeTypes } from "../types";
-import { pokeTypesList } from "../types";
+import type { Pokemon } from "../pokeApiTypes";
 import styles from "../styles/Pokemon.module.css";
 import TypeButton from "./TypeButton";
 import usePokeTypes from "../utils/usePokeTypes";
 import PokeInput from "./PokeInput";
+import { PokeTypes, pokeTypesList as TYPE_LIST } from "../customTypes";
+import Results from "./Results";
 
 export default function Pokemon() {
   const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
   const [currPokemon, setCurrPokemon] = useState("");
 
-  // const [_images, setImages] = useState<any[]>([]);
-  // useEffect(() => {
-  //   const imageModules = import.meta.glob("../assets/*");
-
-  //   let newPromises: Promise<any>[] = [];
-  //   for (const path of Object.values(imageModules)) {
-  //     newPromises.push(fetchPath(path));
-  //   }
-
-  //   Promise.all(newPromises).then((newImages) => {
-  //     const newPaths = newImages.map((img) => img.default);
-  //     console.log(newPaths)
-  //     setImages(newPaths);
-  //   });
-
-  //   // functions
-  //   async function fetchPath(path: () => Promise<any>) {
-  //     return await path();
-  //   }
-  // }, []);
-
-  function handleChangeCurrPokemon(pokemon:string) {
-    setCurrPokemon(pokemon)
+  async function handleChangeCurrPokemon(pokemon: string) {
+    setCurrPokemon(pokemon);
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`)
+    const pokemonData:Pokemon = await res.json();
+    
+    setCurrTypes(pokemonData.types.map((t) => t.type.name))
   }
 
   return (
@@ -40,7 +24,7 @@ export default function Pokemon() {
       {currPokemon}
       <PokeInput handleChangeCurr={handleChangeCurrPokemon} />
       <div className={styles.buttonContainer}>
-        {pokeTypesList.map((type, i) => (
+        {TYPE_LIST.map((type, i) => (
           <TypeButton
             key={i}
             el={type}
@@ -53,16 +37,14 @@ export default function Pokemon() {
         ))}
       </div>
 
-      <code>
-        <h1 style={{ margin: 0, padding: 0 }}>
-          {currTypes[0] ? currTypes : "none"}
-        </h1>
-        {Object.entries(pokeMatchups).map(([matchup, types], i) => (
-          <div key={i}>
-            {matchup}: {isLoading ? "Loading..." : types.join(", ")}
-          </div>
-        ))}
-      </code>
+      <button onClick={() => {
+        setCurrTypes([])
+        setCurrPokemon('')
+      }}>
+        Clear types
+      </button>
+      
+      {isLoading ? 'Loading...' : <Results currTypes={currTypes} pokeMatchups={pokeMatchups} />}
     </>
   );
 
@@ -72,8 +54,10 @@ export default function Pokemon() {
       newTypes.push(type);
       setCurrTypes(newTypes);
     } else {
-      const newInput = toRemovedArray(type, currTypes);
-      setCurrTypes(newInput);
+      if (currTypes.includes(type)) {
+        const newInput = toRemovedArray(type, currTypes);
+        setCurrTypes(newInput);
+      }
     }
   }
 

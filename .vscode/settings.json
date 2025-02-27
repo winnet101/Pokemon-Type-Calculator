@@ -1,3 +1,6 @@
 {
-  "todo-tree.tree.showBadges": true
+  "todo-tree.tree.showBadges": true,
+  "github-actions.workflows.pinned.workflows": [
+    ".github/workflows/deploy-react.yml"
+  ]
 }

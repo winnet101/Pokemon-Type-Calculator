@@ -1,27 +1,6 @@
 import { ButtonHTMLAttributes } from "react";
-import { PokeTypes } from "../types";
-// import {
-//   bug,
-//   dark,
-//   dragon,
-//   electric,
-//   fairy,
-//   fighting,
-//   fire,
-//   flying,
-//   ghost,
-//   grass,
-//   ground,
-//   ice,
-//   normal,
-//   poison,
-//   psychic,
-//   rock,
-//   steel,
-//   water,
-// } from "../images.ts"
-
-import * as images from "../images"
+import * as images from "../images";
+import { PokeTypes } from "../customTypes";
 
 export default function TypeButton({
   el,
@@ -31,7 +10,6 @@ export default function TypeButton({
   el: PokeTypes;
   handleClick: (el: PokeTypes) => void;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick">) {
-
   return (
     <button
       onClick={() => {

@@ -19,7 +19,7 @@ export default function useData<T>(url: string) {
           setIsLoading(false);
         }
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         setIsLoading(false);
         setHasError(true);

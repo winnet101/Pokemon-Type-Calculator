@@ -1,4 +1,4 @@
-import type { PokemonList } from "../types";
+import type { PokemonList } from "../pokeApiTypes";
 import useData from "./useData";
 
 async function fetchCount() {

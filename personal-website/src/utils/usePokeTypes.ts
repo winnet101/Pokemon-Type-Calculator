@@ -1,14 +1,7 @@
 import { useEffect, useState } from "react";
-import { NamedAPIResource, PokeTypes, Type, pokeTypesList } from "../types";
+import { NamedAPIResource, Type } from "../pokeApiTypes";
 import { typedJson } from "./Utils";
-
-type Matchups = {
-  double_weak: PokeTypes[];
-  weaknesses: PokeTypes[];
-  strengths: PokeTypes[];
-  double_strengths: PokeTypes[];
-  nulls: PokeTypes[];
-};
+import { Matchups, PokeTypes, pokeTypesList } from "../customTypes";
 
 function usePokeTypes() {
   const [currTypes, setCurrTypes] = useState<PokeTypes[]>([]);
@@ -27,7 +20,6 @@ function usePokeTypes() {
 
   useEffect(() => {
     setIsLoading(true);
-
     async function fetchTypeData() {
       const newMatchups: Matchups = {
         double_weak: [],
