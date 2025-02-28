@@ -60,7 +60,7 @@ export type {
   PokemonAPIResource,
 };
 
-  import { PokeTypes } from "./customTypes";
+import { PokeTypes } from "../../types";
 import type {
   APIResource,
   Description,

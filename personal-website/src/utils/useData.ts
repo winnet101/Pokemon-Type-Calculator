@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { typedJson } from "./Utils";
+import { typedJson } from "./utils";
 
 export default function useData<T>(url: string) {
   const [data, setData] = useState<T | null>(null as T);

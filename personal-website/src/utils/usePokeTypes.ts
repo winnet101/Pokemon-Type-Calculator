@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { NamedAPIResource, Type } from "../pokeApiTypes";
-import { typedJson } from "./Utils";
-import { Matchups, PokeTypes, pokeTypesList } from "../customTypes";
+import { NamedAPIResource, Type } from "./poke-api-types/pokeApiTypes";
+import { typedJson } from "./utils";
+import { Matchups, PokeTypes, TYPE_LIST } from "../types";
 
 function usePokeTypes() {
   const [currTypes, setCurrTypes] = useState<PokeTypes[]>([]);
@@ -37,9 +37,9 @@ function usePokeTypes() {
             const data = await typedJson<Type>(res);
             const relations = data.damage_relations;
 
-            newMatchups.weaknesses.push(...APItoArr(relations.double_damage_from));
-            newMatchups.strengths.push(...APItoArr(relations.half_damage_from));
-            newMatchups.nulls.push(...APItoArr(relations.no_damage_from));
+            newMatchups.weaknesses.push(...relations.double_damage_from.map(r => r.name));
+            newMatchups.strengths.push(...relations.half_damage_from.map(r => r.name));
+            newMatchups.nulls.push(...relations.no_damage_from.map(r => r.name));
           } catch (error) {
             console.error(error);
           }
@@ -53,8 +53,7 @@ function usePokeTypes() {
       newMatchups.nulls = toUniqueArr(newMatchups.nulls);
 
       // check nonnull overlaps
-
-      pokeTypesList.map((type) => {
+      TYPE_LIST.map((type) => {
         let strongMatchupsWhereTypePresent:(keyof Matchups)[] = []
         let weakMatchupsWhereTypePresent:(keyof Matchups)[] = []
         for (const [matchup, matchupTypes] of Object.entries(newMatchups)) {
@@ -110,15 +109,6 @@ function usePokeTypes() {
 export default usePokeTypes;
 
 // --- utils ---
-
-function APItoArr(api: NamedAPIResource[]): PokeTypes[] {
-  const arr: PokeTypes[] = [];
-  for (const [_key, value] of Object.entries(api)) {
-    arr.push(value.name);
-  }
-  return arr;
-}
-
 function toDupedElements<T extends string>(types: T[]) {
   let dupedTypes: T[] = [];
   types.map((type) => {

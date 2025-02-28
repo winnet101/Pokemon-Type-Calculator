@@ -1,28 +1,42 @@
 import { useState } from "react";
-import type { Pokemon } from "../pokeApiTypes";
 import styles from "../styles/Pokemon.module.css";
 import TypeButton from "./TypeButton";
 import usePokeTypes from "../utils/usePokeTypes";
-import PokeInput from "./PokeInput";
-import { PokeTypes, pokeTypesList as TYPE_LIST } from "../customTypes";
+import Searchbar from "./Searchbar";
+import { PokeTypes, TYPE_LIST } from "../types";
 import Results from "./Results";
+import { Pokemon } from "../utils/poke-api-types/pokeApiTypes";
+import { toRemovedArray } from "../utils/utils";
 
-export default function Pokemon() {
+export default function Main() {
+  const [searchbarText, setSearchbarText] = useState("");
+
   const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
-  const [currPokemon, setCurrPokemon] = useState("");
+  const [currPokemon, setCurrPokemon] = useState<string>("");
 
-  async function handleChangeCurrPokemon(pokemon: string) {
+  async function handleSetCurrPokemon(pokemon: string) {
+    console.log(pokemon)
+
     setCurrPokemon(pokemon);
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`)
-    const pokemonData:Pokemon = await res.json();
-    
-    setCurrTypes(pokemonData.types.map((t) => t.type.name))
+      
+    const res = await fetch(
+      `https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`
+    );
+    const pokemonData: Pokemon = await res.json();
+
+    console.log(pokemonData)
+
+    setCurrTypes(pokemonData.types.map((t) => t.type.name));
   }
 
   return (
     <>
       {currPokemon}
-      <PokeInput handleChangeCurr={handleChangeCurrPokemon} />
+      <Searchbar
+        input={searchbarText}
+        setInput={setSearchbarText}
+        setCurrentPokemon={handleSetCurrPokemon}
+      />
       <div className={styles.buttonContainer}>
         {TYPE_LIST.map((type, i) => (
           <TypeButton
@@ -37,14 +51,21 @@ export default function Pokemon() {
         ))}
       </div>
 
-      <button onClick={() => {
-        setCurrTypes([])
-        setCurrPokemon('')
-      }}>
+      <button
+        onClick={() => {
+          setSearchbarText("")
+          setCurrTypes([]);
+          setCurrPokemon("");
+        }}
+      >
         Clear types
       </button>
-      
-      {isLoading ? 'Loading...' : <Results currTypes={currTypes} pokeMatchups={pokeMatchups} />}
+
+      {isLoading ? (
+        "Loading..."
+      ) : (
+        <Results currTypes={currTypes} pokeMatchups={pokeMatchups} />
+      )}
     </>
   );
 
@@ -59,14 +80,5 @@ export default function Pokemon() {
         setCurrTypes(newInput);
       }
     }
-  }
-
-  function toRemovedArray<T>(input: T, array: T[]): T[] {
-    const index = array.indexOf(input);
-    let newArray = array.slice();
-    if (index > -1) {
-      newArray.splice(index, 1);
-    }
-    return newArray;
   }
 }

@@ -1,10 +1,10 @@
-import Pokemon from "./components/Pokemon";
+import Main from "./components/Pokemon";
 
 export default function App() {
   
   return(
     <>
-      <Pokemon />
+      <Main />
     </>
   );
 }

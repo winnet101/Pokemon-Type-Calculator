@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from "react";
 import * as images from "../images";
-import { PokeTypes } from "../customTypes";
+import { PokeTypes } from "../types";
 
 export default function TypeButton({
   el,

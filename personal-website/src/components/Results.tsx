@@ -1,4 +1,4 @@
-import { Matchups, PokeTypes } from "../customTypes"
+import { Matchups, PokeTypes } from "../types"
 
 export default function Results({
   currTypes, 

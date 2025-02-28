@@ -1,4 +1,4 @@
-const pokeTypesList = [
+const TYPE_LIST = [
   "normal",
   "fighting",
   "flying",
@@ -49,5 +49,5 @@ type Matchups = {
   nulls: PokeTypes[];
 };
 
-export { pokeTypesList };
+export { TYPE_LIST };
 export type { Matchups, PokeTypes };
