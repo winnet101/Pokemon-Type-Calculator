@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import usePokeNames from "../utils/usePokeNames";
 import styles from "../styles/PokeInput.module.css";
 import StringInput from "./StringInput";
@@ -14,10 +14,16 @@ export default function Searchbar({
   setInput: (input: string) => void;
   setCurrentPokemon: (pokemon: string) => void;
 }) {
-  const [isFocused, setIsFocused] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<string[]>([]);
-  const { pokemon, isLoading, hasError } = usePokeNames();
+  const [pokeNames, isLoading, hasError] = usePokeNames();
+
+  const listItemRefs = useRef<Map<string, HTMLLIElement>>(null as any);
+  if (listItemRefs.current === null) {
+    listItemRefs.current = new Map();
+  }
+
+  const [selectedRefIndex, setSelectedRefIndex] = useState<number | null>(null);
 
   // TODO: make this a custom hook?
   const [imagesIsLoading, setImagesIsLoading] = useState(false);
@@ -50,17 +56,19 @@ export default function Searchbar({
     };
   }, [input]);
 
-  function onInputChange(newInput: string) {
-    console.log(newInput);
+  function handleInputChange(newInput: string) {
     setInput(newInput);
     const sanitizedNewInput = newInput.trim().toLowerCase();
+
+    listItemRefs.current.clear()
+    setSelectedRefIndex(null)
 
     if (!sanitizedNewInput) {
       setSearchResults([]);
       return;
     }
 
-    let searchResults = pokemon
+    let searchResults = pokeNames
       // Map all pokemon to names
       .map((api) => {
         return api.name;
@@ -77,27 +85,54 @@ export default function Searchbar({
     setSearchResults(searchResults);
   }
 
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      if (searchResults.length < 1) return;
+
+      if (selectedRefIndex === null) {
+        setSelectedRefIndex(0);
+        listItemRefs.current.get(searchResults[0])?.focus();
+      } else {
+        const nextRefIndex =
+          selectedRefIndex === listItemRefs.current.size - 1
+            ? 0
+            : selectedRefIndex + 1;
+        console.log(listItemRefs.current.size);
+
+        setSelectedRefIndex(nextRefIndex);
+        listItemRefs.current.get(searchResults[nextRefIndex])?.focus();
+      }
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (searchResults.length < 1) return;
+
+      if (selectedRefIndex !== null) {
+        listItemRefs.current.get(searchResults[selectedRefIndex])?.click();
+      }
+    }
+  }
+
   return (
-    <div
-      className={styles.inputWrap}
-      onFocus={() => setIsFocused(true)}
-      onBlur={() => setIsFocused(false)}
-    >
+    <div className={styles.inputWrap}>
       <StringInput
         value={input}
-        onChange={onInputChange}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         className={styles.input}
       />
-      {(
+      {
         <SearchDropdown
           pokeNames={searchResults}
           namesIsLoading={isLoading}
           hasError={hasError}
           images={images}
           imagesIsLoading={imagesIsLoading}
-          setInput={onInputChange}
+          setInput={handleInputChange}
+          liRefs={listItemRefs}
+          selectedRefs={selectedRefIndex}
         />
-      )}
+      }
     </div>
   );
 }

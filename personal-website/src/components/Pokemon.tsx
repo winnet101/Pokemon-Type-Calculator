@@ -10,21 +10,19 @@ import { toRemovedArray } from "../utils/utils";
 
 export default function Main() {
   const [searchbarText, setSearchbarText] = useState("");
-
-  const { currTypes, setCurrTypes, pokeMatchups, isLoading } = usePokeTypes();
+  const [currTypes, setCurrTypes, pokeMatchups, isLoading] = usePokeTypes();
   const [currPokemon, setCurrPokemon] = useState<string>("");
 
   async function handleSetCurrPokemon(pokemon: string) {
-    console.log(pokemon)
-
+    console.log(pokemon);
     setCurrPokemon(pokemon);
-      
+
     const res = await fetch(
       `https://pokeapi.co/api/v2/pokemon/${pokemon.toLowerCase()}`
     );
     const pokemonData: Pokemon = await res.json();
 
-    console.log(pokemonData)
+    console.log(pokemonData);
 
     setCurrTypes(pokemonData.types.map((t) => t.type.name));
   }
@@ -53,7 +51,7 @@ export default function Main() {
 
       <button
         onClick={() => {
-          setSearchbarText("")
+          setSearchbarText("");
           setCurrTypes([]);
           setCurrPokemon("");
         }}

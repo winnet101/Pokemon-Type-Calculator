@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NamedAPIResource, Type } from "./poke-api-types/pokeApiTypes";
+import { Type } from "./poke-api-types/pokeApiTypes";
 import { typedJson } from "./utils";
 import { Matchups, PokeTypes, TYPE_LIST } from "../types";
 
@@ -16,7 +16,7 @@ function usePokeTypes() {
 
   const TYPE_PATH = (type: PokeTypes) => {
     return `https://pokeapi.co/api/v2/type/${type}` as const;
-  }
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -37,9 +37,15 @@ function usePokeTypes() {
             const data = await typedJson<Type>(res);
             const relations = data.damage_relations;
 
-            newMatchups.weaknesses.push(...relations.double_damage_from.map(r => r.name));
-            newMatchups.strengths.push(...relations.half_damage_from.map(r => r.name));
-            newMatchups.nulls.push(...relations.no_damage_from.map(r => r.name));
+            newMatchups.weaknesses.push(
+              ...relations.double_damage_from.map((r) => r.name)
+            );
+            newMatchups.strengths.push(
+              ...relations.half_damage_from.map((r) => r.name)
+            );
+            newMatchups.nulls.push(
+              ...relations.no_damage_from.map((r) => r.name)
+            );
           } catch (error) {
             console.error(error);
           }
@@ -54,42 +60,53 @@ function usePokeTypes() {
 
       // check nonnull overlaps
       TYPE_LIST.map((type) => {
-        let strongMatchupsWhereTypePresent:(keyof Matchups)[] = []
-        let weakMatchupsWhereTypePresent:(keyof Matchups)[] = []
+        let strongMatchupsWhereTypePresent: (keyof Matchups)[] = [];
+        let weakMatchupsWhereTypePresent: (keyof Matchups)[] = [];
         for (const [matchup, matchupTypes] of Object.entries(newMatchups)) {
           if (matchupTypes.includes(type) && matchup !== "nulls") {
             if (matchup.includes("strength")) {
-              strongMatchupsWhereTypePresent.push(matchup as keyof Matchups)
+              strongMatchupsWhereTypePresent.push(matchup as keyof Matchups);
             } else if (matchup.includes("weak")) {
-              weakMatchupsWhereTypePresent.push(matchup as keyof Matchups)
+              weakMatchupsWhereTypePresent.push(matchup as keyof Matchups);
             }
           }
         }
 
         if (strongMatchupsWhereTypePresent.length > 1) {
-          newMatchups.strengths = toDeletedArr(newMatchups.strengths, type)
-          strongMatchupsWhereTypePresent = toDeletedArr(strongMatchupsWhereTypePresent, "strengths")
+          newMatchups.strengths = toDeletedArr(newMatchups.strengths, type);
+          strongMatchupsWhereTypePresent = toDeletedArr(
+            strongMatchupsWhereTypePresent,
+            "strengths"
+          );
         }
         if (weakMatchupsWhereTypePresent.length > 1) {
-          newMatchups.weaknesses = toDeletedArr(newMatchups.weaknesses, type)
-          weakMatchupsWhereTypePresent = toDeletedArr(weakMatchupsWhereTypePresent, "weaknesses")
-
+          newMatchups.weaknesses = toDeletedArr(newMatchups.weaknesses, type);
+          weakMatchupsWhereTypePresent = toDeletedArr(
+            weakMatchupsWhereTypePresent,
+            "weaknesses"
+          );
         }
 
-        let allMatchupsWherePresent = [...(strongMatchupsWhereTypePresent), ...(weakMatchupsWhereTypePresent)]
+        let allMatchupsWherePresent = [
+          ...strongMatchupsWhereTypePresent,
+          ...weakMatchupsWhereTypePresent,
+        ];
         if (allMatchupsWherePresent.length > 1) {
           allMatchupsWherePresent.map((matchup) => {
-            newMatchups[matchup] = toDeletedArr(newMatchups[matchup], type)
-          })
+            newMatchups[matchup] = toDeletedArr(newMatchups[matchup], type);
+          });
         }
-      })
+      });
 
       for (const type of newMatchups.nulls) {
         Object.keys(newMatchups).map((matchup) => {
           if (matchup !== "nulls") {
-            newMatchups[matchup as keyof Matchups] = toDeletedArr(newMatchups[matchup as keyof Matchups], type as PokeTypes)
+            newMatchups[matchup as keyof Matchups] = toDeletedArr(
+              newMatchups[matchup as keyof Matchups],
+              type as PokeTypes
+            );
           }
-        })
+        });
       }
 
       setPokeMatchups(newMatchups);
@@ -103,7 +120,7 @@ function usePokeTypes() {
     };
   }, [currTypes]);
 
-  return { currTypes, setCurrTypes, pokeMatchups, isLoading };
+  return [currTypes, setCurrTypes, pokeMatchups, isLoading] as const;
 }
 
 export default usePokeTypes;
@@ -112,18 +129,18 @@ export default usePokeTypes;
 function toDupedElements<T extends string>(types: T[]) {
   let dupedTypes: T[] = [];
   types.map((type) => {
-    let typesWithRemoved = types.slice() 
+    let typesWithRemoved = types.slice();
     typesWithRemoved.splice(typesWithRemoved.indexOf(type as T), 1);
 
     if (typesWithRemoved.includes(type as T)) {
       dupedTypes.push(type as T);
     }
-  })
+  });
   return toUniqueArr(dupedTypes);
 }
 
 function toDeletedArr<T extends string>(types: T[], deletedElement: T) {
-  let typesWithRemoved = types.slice() 
+  let typesWithRemoved = types.slice();
   while (typesWithRemoved.includes(deletedElement)) {
     typesWithRemoved.splice(types.indexOf(deletedElement), 1);
   }
