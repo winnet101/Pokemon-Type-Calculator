@@ -1,0 +1,61 @@
+.resultsContainer {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.selectedTypes h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  color: #2c3e50;
+}
+
+.matchupsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.matchupCard {
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.matchupCard:hover {
+  transform: translateY(-2px);
+}
+
+.matchupTitle {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.typesList {
+  font-size: 1rem;
+  color: #2c3e50;
+}
+
+/* Matchup-specific styles */
+.immune {
+  background-color: #e8f5e9;
+  border: 2px solid #81c784;
+}
+
+.weak {
+  background-color: #ffebee;
+  border: 2px solid #ef9a9a;
+}
+
+.resistant {
+  background-color: #e3f2fd;
+  border: 2px solid #90caf9;
+}
+
+.normal {
+  background-color: #f5f5f5;
+  border: 2px solid #bdbdbd;
+}

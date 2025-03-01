@@ -4,7 +4,7 @@ import TypeButton from "./TypeButton";
 import usePokeTypes from "../utils/usePokeTypes";
 import Searchbar from "./Searchbar";
 import { PokeTypes, TYPE_LIST } from "../types";
-import Results from "./Results";
+import Results, { ResultsSkeleton } from "./Results";
 import { Pokemon } from "../utils/poke-api-types/pokeApiTypes";
 import { toRemovedArray } from "../utils/utils";
 
@@ -12,6 +12,7 @@ export default function Main() {
   const [searchbarText, setSearchbarText] = useState("");
   const [currTypes, setCurrTypes, pokeMatchups, isLoading] = usePokeTypes();
   const [currPokemon, setCurrPokemon] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<string[]>([]);
 
   async function handleSetCurrPokemon(pokemon: string) {
     console.log(pokemon);
@@ -29,11 +30,12 @@ export default function Main() {
 
   return (
     <>
-      {currPokemon}
       <Searchbar
         input={searchbarText}
         setInput={setSearchbarText}
         setCurrentPokemon={handleSetCurrPokemon}
+        searchResults={searchResults}
+        setSearchResults={setSearchResults}
       />
       <div className={styles.buttonContainer}>
         {TYPE_LIST.map((type, i) => (
@@ -50,20 +52,23 @@ export default function Main() {
       </div>
 
       <button
+        className={styles.clearButton}
         onClick={() => {
           setSearchbarText("");
           setCurrTypes([]);
           setCurrPokemon("");
+          setSearchResults([])
         }}
       >
         Clear types
       </button>
 
       {isLoading ? (
-        "Loading..."
+          <ResultsSkeleton />
       ) : (
         <Results currTypes={currTypes} pokeMatchups={pokeMatchups} />
       )}
+
     </>
   );
 

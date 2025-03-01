@@ -9,13 +9,17 @@ export default function Searchbar({
   input,
   setInput,
   setCurrentPokemon,
+  searchResults,
+  setSearchResults,
 }: {
   input: string;
   setInput: (input: string) => void;
   setCurrentPokemon: (pokemon: string) => void;
+  searchResults: string[];
+  setSearchResults: (results: string[]) => void;
 }) {
   const [images, setImages] = useState<string[]>([]);
-  const [searchResults, setSearchResults] = useState<string[]>([]);
+
   const [pokeNames, isLoading, hasError] = usePokeNames();
 
   const listItemRefs = useRef<Map<string, HTMLLIElement>>(null as any);
@@ -27,6 +31,8 @@ export default function Searchbar({
 
   // TODO: make this a custom hook?
   const [imagesIsLoading, setImagesIsLoading] = useState(false);
+
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -60,8 +66,8 @@ export default function Searchbar({
     setInput(newInput);
     const sanitizedNewInput = newInput.trim().toLowerCase();
 
-    listItemRefs.current.clear()
-    setSelectedRefIndex(null)
+    listItemRefs.current.clear();
+    setSelectedRefIndex(null);
 
     if (!sanitizedNewInput) {
       setSearchResults([]);
@@ -85,43 +91,59 @@ export default function Searchbar({
     setSearchResults(searchResults);
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      if (searchResults.length < 1) return;
+  // function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+  //   console.log('keydown')
+  //   if (e.key === "Tab") {
+  //     if (searchResults.length < 1) return;
+  //     console.log(listItemRefs.current.size);
 
-      if (selectedRefIndex === null) {
-        setSelectedRefIndex(0);
-        listItemRefs.current.get(searchResults[0])?.focus();
-      } else {
-        const nextRefIndex =
-          selectedRefIndex === listItemRefs.current.size - 1
-            ? 0
-            : selectedRefIndex + 1;
-        console.log(listItemRefs.current.size);
 
-        setSelectedRefIndex(nextRefIndex);
-        listItemRefs.current.get(searchResults[nextRefIndex])?.focus();
-      }
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (searchResults.length < 1) return;
+  //     if (selectedRefIndex === null) {
+  //       e.preventDefault();
 
-      if (selectedRefIndex !== null) {
-        listItemRefs.current.get(searchResults[selectedRefIndex])?.click();
-      }
-    }
-  }
+  //       setSelectedRefIndex(0);
+  //       listItemRefs.current.get(searchResults[0])?.focus();
+
+  //     } else {
+  //       const nextRefIndex =
+  //         selectedRefIndex === listItemRefs.current.size - 1
+  //           ? 0
+  //           : selectedRefIndex + 1;
+
+  //       console.log(nextRefIndex)
+            
+
+  //       setSelectedRefIndex(nextRefIndex);
+  //       listItemRefs.current.get(searchResults[nextRefIndex])?.focus();
+  //     }
+  //   } else if (e.key === "Enter") {
+  //     e.preventDefault();
+  //     if (searchResults.length < 1) return;
+
+  //     if (selectedRefIndex !== null) {
+  //       listItemRefs.current.get(searchResults[selectedRefIndex])?.click();
+  //     }
+  //   }
+  // }
 
   return (
-    <div className={styles.inputWrap}>
+    <div
+      className={styles.inputWrap}
+      onFocus={() => setIsFocused(true)}
+      onBlur={(e) => {
+        // Only blur if we're not focusing another element inside the wrapper
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+          setIsFocused(false);
+        }
+      }}
+    >
       <StringInput
         value={input}
         onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
+        // onKeyDown={handleKeyDown}
         className={styles.input}
       />
-      {
+      {isFocused && 
         <SearchDropdown
           pokeNames={searchResults}
           namesIsLoading={isLoading}
@@ -131,6 +153,7 @@ export default function Searchbar({
           setInput={handleInputChange}
           liRefs={listItemRefs}
           selectedRefs={selectedRefIndex}
+          setIsFocused={setIsFocused}
         />
       }
     </div>

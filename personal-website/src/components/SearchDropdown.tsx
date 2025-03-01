@@ -11,6 +11,7 @@ interface SearchDropdownProps extends React.ComponentPropsWithoutRef<"ul"> {
   liRefs: MutableRefObject<Map<string, HTMLLIElement>>;
   selectedRefs: number | null;
   setInput: (input: string) => void;
+  setIsFocused: (isFocused: boolean) => void
 }
 
 const SearchDropdown = forwardRef<HTMLUListElement, SearchDropdownProps>(
@@ -24,58 +25,52 @@ const SearchDropdown = forwardRef<HTMLUListElement, SearchDropdownProps>(
       liRefs,
       selectedRefs,
       setInput,
+      setIsFocused,
       ...otherProps
     },
     ref
   ) => {
     if (pokeNames.length < 1) {
       return (
-        <div className={styles.list}>
+        <div className={styles.dropdown}>
           Enter the name of a Pokemon to autofill its types.
         </div>
       );
     }
 
-    if (namesIsLoading) {
-      return <div className={styles.list}>Loading...</div>;
-    }
-
-    if (hasError) {
-      return (
-        <div className={styles.list}>
-          There was an error loading autocomplete results. Try reloading the
-          page.
-        </div>
-      );
-    }
-
     return (
-      <ul className={styles.list} ref={ref} {...otherProps}>
-        {pokeNames.map((name, i) => (
-          <li
-            key={i}
-            onClick={() => setInput(name)}
-            className={styles.listItem}
-            ref={(el) => {
-              if (el) {
-                liRefs.current.set(name, el);
-              }
-            }}
-            style={{
-              outline: `${selectedRefs === i ? "solid" : ""}`,
-            }}
-          >
-            <span>{name}</span>
-            <span>
+      <div className={styles.dropdown}>
+        {hasError ? (
+          <div className={styles.error}>Failed to load Pokémon</div>
+        ) : namesIsLoading ? (
+          <div className={styles.loading}>Loading...</div>
+        ) : (
+          pokeNames.map((name, index) => (
+            <li
+              key={name}
+              className={styles.dropdownItem}
+              ref={(el) => el && liRefs.current.set(name, el)}
+              tabIndex={0}
+              onClick={() => {
+                setInput(name)
+                setIsFocused(false)
+              }}
+            >
               {imagesIsLoading ? (
-                " | Loading..."
+                <span 
+                className={styles.pokemonImage} />
               ) : (
-                <img src={images[i]} width={45} />
+                <img
+                  src={images[index]}
+                  alt={name}
+                  className={styles.pokemonImage}
+                />
               )}
-            </span>
-          </li>
-        ))}
-      </ul>
+              <span className={styles.pokemonName}>{name}</span>
+            </li>
+          ))
+        )}
+      </div>
     );
   }
 );

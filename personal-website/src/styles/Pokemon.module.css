@@ -1,26 +1,61 @@
 .buttonContainer {
-  margin-top: 1rem;
+  margin: 2rem auto;
+  max-width: 800px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.5rem;
+  padding: 0 1rem;
 }
 
 .button {
   text-transform: capitalize;
-  padding: 0.3rem;
+  padding: 0.3rem 0.2rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   border-radius: 6px;
+  border: 2px solid #e0e0e0;
+  background-color: white;
+  color: black;
   transition: 
     background-color 0.2s,
-    color 0.2s
+    color 0.2s,
+    transform 0.2s
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #9fb9ff;
+}
+
+.button:active {
+  transform: translateY(0);
+
 }
 
 .selected {
   border-width: 2px;
   color: rgb(234, 234, 234);
-  background-color: rgb(19, 49, 114);
+  background-color: #2962ff !important;
   border-color: rgb(234, 234, 234);
-  box-shadow: black 0 0 7px 0.3px;
+}
+
+.clearButton {
+  margin: 1rem auto;
+  display: block;
+  padding: 0.4rem 0.6rem;
+  border-radius: 2px;
+  border: 2px solid #e0e0e0;
+  background-color: white;
+  color: #666;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.clearButton:hover {
+  background-color: #f5f5f5;
+  border-color: #d0d0d0;
+  color: black;
 }
